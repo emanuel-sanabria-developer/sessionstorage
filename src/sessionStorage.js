@@ -16,6 +16,36 @@
  * @compatibility   Internet Explorer, Chrome, Opera (unobtrusive for others)
  * @credits         W3 WebStorage Draft     http://dev.w3.org/html5/webstorage/
  *                  RC4 Stream Cipher       http://www.wisdom.weizmann.ac.il/~itsik/RC4/rc4.html
+ *
+ * @protocol        Aka window.name or Plain String Storage Manager, by the @author
+ * ----------------------------------------------------------------------------------------------
+ *          c       = special separator char
+ *                    A special char is required to make quick string search possible.
+ *                    In these specs this is a 1 byte \x01 char (SOH).
+ *                    Stored value should never contain this char or the \x00 one (EOS)
+ *
+ *          key     = key to use as value pointer
+ *                    key must be a string, even an empty one, but it cannot contain
+ *                    these characters \x00, \x01
+ *                    A key is hopefully a relatively small string. This is why
+ *                    to keep the protocol compact it is not necessary to specify its length.
+ *
+ *          length  = value length
+ *                    The value string length, after escaping, makes value easy and fast
+ *                    to retrieve avoiding char to char parsing.
+ *                    The length could be in bytes (other languages) or
+ *                    as number of characters (JavaScript/Unicode)
+ *
+ *          value   = value to store
+ *                    value must be a string, even an empty one, but it cannot contain
+ *                    these characters \x00, \x01
+ *                    value has no length limits except memory consumption.
+ *
+ *          entry   = c + key + c + length + c + value
+ *                    the protocol can append in every moment a new entry.
+ *                    the protocol can contain whatever number of entries.
+ *                    the only limit is the memory consumption.
+ * ----------------------------------------------------------------------------------------------
  */
 
 // check if sessionStorage is already defined
