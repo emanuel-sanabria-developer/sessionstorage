@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<pre></pre>
+<script type="text/javascript" src="../src/RC4.min.js"></script>
+<script type="text/javascript">
+(function(pre){
+
+function write(text, callback, replaceLast){
+    if(replaceLast)
+        pre.removeChild(pre.lastChild);
+    pre.appendChild(document.createTextNode(text + " "));
+    setTimeout(callback, 1);
+};
+
+write("long string generation\r\n\r\n", function(){
+    for(var fromCharCode = String.fromCharCode, random = Math.random, i = 1, s = ["$"], t = new Date; i < 500; ++i)
+        s[i] = s[i - 1] + String.fromCharCode(random() * 60 + 40);
+    s = s.join("");
+    t = new Date - t;
+    var i = 1, max = 256, avge = 0, avgd = 0;
+    write(" long string generated in " + (t / 1000).toFixed(3) + " seconds. String length is " + (s.length / 1024).toFixed(2) + " Kb\r\n\r\n", function(){
+        var key = RC4.key(i),
+            e   = new Date,
+            $, d
+        ;
+        $ = RC4.encode(key, s);
+        e   = new Date - e;
+        avge += e;
+        d = new Date;
+        $ = RC4.decode(key, $);
+        d   = new Date - d;
+        avgd += d;
+        if($ !== s)
+            throw new Error("something wrong");
+        write(
+            "key length " + i + " encoded in " + (e / 1000).toFixed(3) + " and decoded in " + (d / 1000).toFixed(3) + " seconds.\r\n\r\n",
+            i < max ? ++i && arguments.callee : function(){
+                write("Average encoding time: " + (avge / max / 1000).toFixed(3), function(){
+                    write("Average decoding time: " + (avgd / max / 1000).toFixed(3), function(){
+                        if(confirm("want to try big string?")){
+                            for(var fromCharCode = String.fromCharCode, random = Math.random, i = 1, s = ["$"]; i < 1000; ++i)
+                                s[i] = s[i - 1] + String.fromCharCode(random() * 60 + 40);
+                            s = s.join("");
+                            t = new Date;
+                            RC4.encode(key, s);
+                            t = new Date - t;
+                            write("String length is " + (s.length / 1024).toFixed(2) + " Kb and it has been encoded in " + (t / 1000).toFixed(3) + " seconds", function(){});
+                        }
+                    });
+                });
+            }, i !== 2
+        );
+    }, true);
+    
+});
+
+})(document.getElementsByTagName("pre")[0]);
+</script>
