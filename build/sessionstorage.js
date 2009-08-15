@@ -1,11 +1,24 @@
 /** HTML5 sessionStorage
- * @build       2009-08-15 16:41:54
+ * @build       2009-08-15 17:23:03
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
  */
 
+// define sessionStorage only if not present (old browser)
 if(typeof sessionStorage === "undefined")(function(window){
+
+// this script could have been included via iframe so we would like to use the top context sessionStorage
+// but if the iframe is not part of the domain below check could generate an error
+var top = window;
+try{while(top !== top.top)top = top.top;}catch(e){};
+
+// if the parent included this script as well ...
+if(typeof top.sessionStorage !== "undefined")
+    // this script is useless but this context would like to use the top level sessionStorage
+    window.sessionStorage = top.sessionStorage;
+else {
+    // let's create the sessionStorage
 
 /** RC4 Stream Cipher
  *  http://www.wisdom.weizmann.ac.il/~itsik/RC4/rc4.html
@@ -467,6 +480,8 @@ sessionStorage = new sessionStorage;
 
 // create the global reference only if it is usable
 if(cache !== null)
-    window.sessionStorage = sessionStorage;
+    // be sure both top context and this context (could be the same) point to the same object
+    top.sessionStorage = window.sessionStorage = sessionStorage;
 
+} // else end
 })(window);

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script type="text/javascript" src="../build.php"></script>
+<script type="text/javascript">
+var iframe = sessionStorage.getItem("iframe");
+if(iframe === null)
+    iframe = 0;
+if(iframe++ < 3){
+    sessionStorage.setItem("iframe", iframe);
+    onload = function(){
+        document.getElementsByTagName("div")[0].innerHTML +=
+        iframe + '<iframe src="?' + Math.random() + '"></iframe>';
+    };
+} else
+    sessionStorage.clear();
+</script>
+<div>here I am</div>
