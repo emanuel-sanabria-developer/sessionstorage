@@ -62,7 +62,7 @@
          */
         key:function(length){
             for(var i = 0, key = []; i < length; ++i)
-                key[i] = fromCharCode((random() * 256) << 0);
+                key[i] = fromCharCode(1 + ((random() * 255) << 0));
             return key.join("");
         }
     }

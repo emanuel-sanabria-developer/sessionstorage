@@ -3,11 +3,13 @@
     <head>
         <title>HTML5 sessionStorage demo 1</title>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-        <script type="text/javascript" src="http://sessionstorage.googlecode.com/svn/trunk/build/sessionstorage.min.js"></script>
+        <script type="text/javascript" src="http://sessionstorage.googlecode.com/svn/trunk/build/sessionstorage.js"></script>
         <script type="text/javascript">
         onload = function(){
             var div = document.getElementById("info");
-            if(typeof sessionStorage !== "undefined" || !sessionStorage.disabled){
+            if(typeof sessionStorage === "undefined" || sessionStorage.disabled)
+                div.innerHTML = "I am sorry. You have no cookies enabled or your browser is crap.";
+            else {
                 if(sessionStorage.getItem("sessionStarted")){
                     function showInfo(){
                         div.innerHTML = "Your session started " + Math.floor((new Date - sessionStarted) / 1000) + " seconds ago.";
@@ -20,8 +22,7 @@
                     sessionStorage.setItem("sessionStarted", new Date().getTime());
                     div.innerHTML = "Welcome to HTML5 sessionStorage demonstration.";
                 }
-            } else
-                div.innerHTML = "I am sorry. You have no cookies enabled or your browser is crap.";
+            }
         };
         </script>
     </head>

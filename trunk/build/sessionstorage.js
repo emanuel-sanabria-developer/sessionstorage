@@ -1,5 +1,5 @@
 /** HTML5 sessionStorage
- * @build       2009-08-15 16:29:18
+ * @build       2009-08-15 16:40:09
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
@@ -71,7 +71,7 @@ if(typeof sessionStorage === "undefined")(function(window){
          */
         key:function(length){
             for(var i = 0, key = []; i < length; ++i)
-                key[i] = fromCharCode((random() * 256) << 0);
+                key[i] = fromCharCode(1 + ((random() * 255) << 0));
             return key.join("");
         }
     }
