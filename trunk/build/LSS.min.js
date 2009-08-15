@@ -1,5 +1,5 @@
 /** Linear String Storage
- * @build       2009-08-15 01:28:37
+ * @build       2009-08-15 16:44:40
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/

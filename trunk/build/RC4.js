@@ -1,6 +1,6 @@
 /** RC4 Stream Cipher
  *  http://www.wisdom.weizmann.ac.il/~itsik/RC4/rc4.html
- * @build       2009-08-15 01:28:23
+ * @build       2009-08-15 16:44:21
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
@@ -16,7 +16,7 @@
  * @author          this JavaScript porting by Andrea Giammarchi
  * @license         Mit Style License
  * @blog            http://webreflection.blogspot.com/
- * @version         1.0
+ * @version         1.1
  * @compatibility   hopefully every browser
  */
  var RC4 = (function(fromCharCode, random){
@@ -70,7 +70,7 @@
          */
         key:function(length){
             for(var i = 0, key = []; i < length; ++i)
-                key[i] = fromCharCode((random() * 256) << 0);
+                key[i] = fromCharCode(1 + ((random() * 255) << 0));
             return key.join("");
         }
     }
