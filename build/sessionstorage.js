@@ -1,5 +1,5 @@
 /** HTML5 sessionStorage
- * @build       2009-08-15 16:21:34
+ * @build       2009-08-15 16:29:18
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
@@ -251,8 +251,6 @@ if(Object.prototype.toString.call(window.opera) === "[object Opera]"){
     LSS.prototype.escape = window.encodeURIComponent;
     LSS.prototype.unescape = window.decodeURIComponent;
 };
-
-alert(navigator.userAgent);
 
 // sessionStorage is a Singleton instance: http://en.wikipedia.org/wiki/Singleton_pattern
 // Below constructor should never be reached outside this closure.
