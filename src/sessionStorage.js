@@ -12,7 +12,7 @@
  * @author          Andrea Giammarchi
  * @license         Mit Style License
  * @blog            http://webreflection.blogspot.com/
- * @version         1.1
+ * @version         1.2
  * @compatibility   Internet Explorer, Chrome, Opera (unobtrusive for others)
  * @credits         W3 WebStorage Draft     http://dev.w3.org/html5/webstorage/
  *                  RC4 Stream Cipher       http://www.wisdom.weizmann.ac.il/~itsik/RC4/rc4.html

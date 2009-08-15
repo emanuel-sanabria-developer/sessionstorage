@@ -8,7 +8,7 @@
  * @author          this JavaScript porting by Andrea Giammarchi
  * @license         Mit Style License
  * @blog            http://webreflection.blogspot.com/
- * @version         1.0
+ * @version         1.1
  * @compatibility   hopefully every browser
  */
  var RC4 = (function(fromCharCode, random){
