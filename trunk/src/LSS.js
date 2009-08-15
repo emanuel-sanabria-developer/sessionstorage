@@ -30,9 +30,10 @@
  */
 var LSS = (function(window){
 
-    /** new LSS([storage:Object, key:String])
+    /** new LSS([storage:Object, key:String, data:String])
      * @param   Object      an optional object to use as storage or directly a linear String.
      * @param   String      the Object property with the linear string to manage.
+     * @param   String      optional data to preserve as initial string (when clear is performed, data is preserved)
      * @example
      *          // persistent storage via window.name property
      *          var s = new LSS(window, "name");
@@ -43,7 +44,8 @@ var LSS = (function(window){
      *          // temporary storage with empty string
      *          var s = new LSS();
      */
-    function LSS(_storage, _key){
+    function LSS(_storage, _key, _data){
+        this._data = _data || "";
         if(this._key = _key)
             this._storage = _storage;
         else {
@@ -57,10 +59,10 @@ var LSS = (function(window){
     LSS.prototype.c = String.fromCharCode(1);
 
     /** this.clear(void):void
-     * @description     clear the storage string.
+     * @description     reset the storage string
      */
     LSS.prototype.clear = function(){
-        this._storage[this._key] = "";
+        this._storage[this._key] = this._data;
     };
 
     /** this.del(key:String):void
@@ -126,13 +128,9 @@ var LSS = (function(window){
         var c = this.c;
         key = this.escape(key);
         data = this.escape(data);
-        return concat.call(c, key, c, data.length, c, data);
+        return c.concat(key, c, data.length, c, data);
     };
-
-    // wrap here the native String.prototype.concat
-    // to make concat operation safe against re-defined global methods.
-    var concat = String.prototype.concat;
 
     return LSS;
 
-})(this)
+})(window);
