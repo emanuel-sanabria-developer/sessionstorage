@@ -4,17 +4,21 @@
 var iframe = sessionStorage.getItem("iframe");
 if(iframe === null)
     iframe = 0;
-if(iframe++ < 3){
+if(iframe++ < 2){
     sessionStorage.setItem("iframe", iframe);
     onload = function(){
         document.getElementsByTagName("div")[0].innerHTML +=
         iframe + '<iframe src="?' + Math.random() + '"></iframe>';
     };
 } else {
+    sessionStorage.setItem("iframe", iframe);
     sessionStorage.clear();
     onload = function(){
-        document.getElementsByTagName("div")[0].innerHTML += 4;
+        document.getElementsByTagName("div")[0].innerHTML += 3;
     };
 };
+window.addEventListener("storage", function(){
+    alert("it cannot be");
+}, false);
 </script>
 <div>here I am</div>
