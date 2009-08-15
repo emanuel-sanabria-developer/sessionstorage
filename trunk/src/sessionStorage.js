@@ -248,4 +248,5 @@ sessionStorage = new sessionStorage;
 
 // create the global reference only if it is usable
 if(cache !== null)
-    window.sessionStorage = sessionStorage;
+    // be sure both top context and this context (could be the same) point to the same object
+    top.sessionStorage = window.sessionStorage = sessionStorage;
