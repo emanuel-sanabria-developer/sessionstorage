@@ -1,5 +1,5 @@
 /** HTML5 sessionStorage
- * @build       2009-08-15 16:14:06
+ * @build       2009-08-15 16:21:34
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
@@ -252,6 +252,8 @@ if(Object.prototype.toString.call(window.opera) === "[object Opera]"){
     LSS.prototype.unescape = window.decodeURIComponent;
 };
 
+alert(navigator.userAgent);
+
 // sessionStorage is a Singleton instance: http://en.wikipedia.org/wiki/Singleton_pattern
 // Below constructor should never be reached outside this closure.
 function sessionStorage(){
@@ -322,21 +324,13 @@ function sessionStorage(){
         clear();
         // if sessionStorage cookie is not present ...
         if(!cookie.exec(document.cookie))
-            // set this instance as NOT ENABLED
-            // this should not affect W3 draft since the check is over
-            // disabed property
-            this.disabled = true;
+            // clear the cache, this sessionStorage is not usable!
+            cache = null;
     };
 };
 
 // sessionStorage Sinngleton prototype
 sessionStorage.prototype = {
-
-    // the only NOT STANDARD property
-    // it is useful to check whenever we need:
-    // if(!sessionStorage.disabled)
-    //      alert("Get Out From Jurassic Park!");
-    disabled:false,
 
     // lenght should be a read only property
     // it contains lenght of every key present in this object
@@ -471,6 +465,10 @@ if(!cache.indexOf) cache.indexOf = function(data){
     };
 
 // it's about the time to create the sessionStorage object, isn't it?
-window.sessionStorage = new sessionStorage;
+sessionStorage = new sessionStorage;
+
+// create the global reference only if it is usable
+if(cache !== null)
+    window.sessionStorage = sessionStorage;
 
 })(window);

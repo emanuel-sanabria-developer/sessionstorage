@@ -103,21 +103,13 @@ function sessionStorage(){
         clear();
         // if sessionStorage cookie is not present ...
         if(!cookie.exec(document.cookie))
-            // set this instance as NOT ENABLED
-            // this should not affect W3 draft since the check is over
-            // disabed property
-            this.disabled = true;
+            // clear the cache, this sessionStorage is not usable!
+            cache = null;
     };
 };
 
 // sessionStorage Sinngleton prototype
 sessionStorage.prototype = {
-
-    // the only NOT STANDARD property
-    // it is useful to check whenever we need:
-    // if(!sessionStorage.disabled)
-    //      alert("Get Out From Jurassic Park!");
-    disabled:false,
 
     // lenght should be a read only property
     // it contains lenght of every key present in this object
@@ -252,4 +244,8 @@ if(!cache.indexOf) cache.indexOf = function(data){
     };
 
 // it's about the time to create the sessionStorage object, isn't it?
-window.sessionStorage = new sessionStorage;
+sessionStorage = new sessionStorage;
+
+// create the global reference only if it is usable
+if(cache !== null)
+    window.sessionStorage = sessionStorage;
