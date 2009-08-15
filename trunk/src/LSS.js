@@ -6,7 +6,7 @@
  * @author          Andrea Giammarchi
  * @license         Mit Style License
  * @blog            http://webreflection.blogspot.com/
- * @version         1.0
+ * @version         1.1
  * @compatibility   Internet Explorer, Chrome, Opera (unobtrusive for others)
  * @protocol        Linear String Storage Protocol Specs
  * -----------------------------------------------
@@ -14,14 +14,14 @@
  * key     = key to use as value reference
  * length  = value length
  * value   = value to store
- * entry   = c + key + c + length + c + value
+ * entry   = c + c + key + c + length + c + value
  * -----------------------------------------------
- * c key c length c value
- * o[   ]o[      ]o[     ]
+ *  c key c length c value
+ * oo[   ]o[      ]o[     ]
  *
  * key must be a string
  * value must be a string
- * both key and value should be converted
+ * both key or value, if not strings, should be converted
  * both key and value cannot contain the special "c" char (replacement)
  * entry can always be appended into the linear string storage
  * entry cannot exist, or there could be more than an entry
@@ -45,7 +45,7 @@ var LSS = (function(window){
      *          var s = new LSS();
      */
     function LSS(_storage, _key, _data){
-        this._data = _data || "";
+        this._i = (this._data = _data || "").length;
         if(this._key = _key)
             this._storage = _storage;
         else {
@@ -91,13 +91,33 @@ var LSS = (function(window){
     LSS.prototype.get = function(key){
         var _storage = this._storage[this._key],
             c = this.c,
-            i = _storage.indexOf(key = c + this.escape(key) + c),
+            i = _storage.indexOf(key = c.concat(c, this.escape(key), c), this._i),
             data = null
         ;
         if(-1 < i){
             i = _storage.indexOf(c, i + key.length - 1) + 1;
             data = _storage.substring(i, i = _storage.indexOf(c, i));
             data = this.unescape(_storage.substr(++i, data));
+        };
+        return data;
+    };
+
+    /** this.key(void):Array
+     * @description     put each key into an array and return it
+     * @return  Array   all keys found in the storage.
+     */
+    LSS.prototype.key = function(){
+        var _storage = this._storage[this._key],
+            c = this.c,
+            i = this._i,
+            key = c + c,
+            data = [],
+            length = 0,
+            l = 0
+        ;
+        while(-1 < (i = _storage.indexOf(key, i))){
+            data[l++] = this.unescape(_storage.substring(i += 2, length = _storage.indexOf(c, i)));
+            i = 1 * _storage.substring(++length, _storage.indexOf(c, length)) + length + 2;
         };
         return data;
     };
@@ -128,7 +148,7 @@ var LSS = (function(window){
         var c = this.c;
         key = this.escape(key);
         data = this.escape(data);
-        return c.concat(key, c, data.length, c, data);
+        return c.concat(c, key, c, data.length, c, data);
     };
 
     return LSS;
