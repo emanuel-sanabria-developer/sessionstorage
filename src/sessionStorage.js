@@ -92,7 +92,7 @@ function sessionStorage(){
             i = l = 0;
             while(-1 < (i = name.indexOf(c, i))){
                 // cache is a private scope Array which contains set keys
-                cache[l++] = LSS.unescape(name.substring(i, length = name.indexOf(c, ++i)));
+                cache[l++] = LSS.unescape(name.substring(++i, length = name.indexOf(c, i)));
                 i = 1 * name.substring(++length, name.indexOf(c, length)) + length + 2;
             };
 
