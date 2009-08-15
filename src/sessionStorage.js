@@ -47,16 +47,16 @@ function sessionStorage(){
             "sessionStorage=" + escape($key = RC4.key(128))
         ].join(';');
         // the clean window.name with encrypted domain
-        window.name = escape(RC4.encode($key, document.domain));
+        top.name = escape(RC4.encode($key, document.domain));
         // the LSS object to use in the entire scope
-        LSS = new LSS(window, "name", window.name);
+        LSS = new LSS(top, "name", top.name);
     };
     var // shortcut for the special char used by the LSS
         c = LSS.prototype.c,
         // get the window.name resolved string
-        name = window.name,
+        name = top.name,
         // shortcut for the document
-        document = window.document,
+        document = top.document,
         // regexp to test the domain cookie
         cookie = /\bsessionStorage\b=([^;]+)(;|$)/,
         // a RegExp able to understand in a shot the Linear String Storage Protocol
@@ -81,7 +81,7 @@ function sessionStorage(){
             name = clear();
         else{
             // the LSS object with the domain string as clear option
-            LSS = new LSS(window, "name", domain);
+            LSS = new LSS(top, "name", domain);
 
             /** actually too slow with big strings
             while(data = re.exec(name))
@@ -249,4 +249,4 @@ sessionStorage = new sessionStorage;
 // create the global reference only if it is usable
 if(cache !== null)
     // be sure both top context and this context (could be the same) point to the same object
-    top.sessionStorage = window.sessionStorage = sessionStorage;
+    window.sessionStorage = sessionStorage;

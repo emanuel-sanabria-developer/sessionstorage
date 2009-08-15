@@ -1,5 +1,5 @@
 /** HTML5 sessionStorage
- * @build       2009-08-15 17:23:03
+ * @build       2009-08-15 17:41:35
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
@@ -8,17 +8,10 @@
 // define sessionStorage only if not present (old browser)
 if(typeof sessionStorage === "undefined")(function(window){
 
-// this script could have been included via iframe so we would like to use the top context sessionStorage
+// this script could have been included via iframe so we would like to use the top context as storage area
 // but if the iframe is not part of the domain below check could generate an error
 var top = window;
 try{while(top !== top.top)top = top.top;}catch(e){};
-
-// if the parent included this script as well ...
-if(typeof top.sessionStorage !== "undefined")
-    // this script is useless but this context would like to use the top level sessionStorage
-    window.sessionStorage = top.sessionStorage;
-else {
-    // let's create the sessionStorage
 
 /** RC4 Stream Cipher
  *  http://www.wisdom.weizmann.ac.il/~itsik/RC4/rc4.html
@@ -279,16 +272,16 @@ function sessionStorage(){
             "sessionStorage=" + escape($key = RC4.key(128))
         ].join(';');
         // the clean window.name with encrypted domain
-        window.name = escape(RC4.encode($key, document.domain));
+        top.name = escape(RC4.encode($key, document.domain));
         // the LSS object to use in the entire scope
-        LSS = new LSS(window, "name", window.name);
+        LSS = new LSS(top, "name", top.name);
     };
     var // shortcut for the special char used by the LSS
         c = LSS.prototype.c,
         // get the window.name resolved string
-        name = window.name,
+        name = top.name,
         // shortcut for the document
-        document = window.document,
+        document = top.document,
         // regexp to test the domain cookie
         cookie = /\bsessionStorage\b=([^;]+)(;|$)/,
         // a RegExp able to understand in a shot the Linear String Storage Protocol
@@ -313,7 +306,7 @@ function sessionStorage(){
             name = clear();
         else{
             // the LSS object with the domain string as clear option
-            LSS = new LSS(window, "name", domain);
+            LSS = new LSS(top, "name", domain);
 
             /** actually too slow with big strings
             while(data = re.exec(name))
@@ -481,7 +474,6 @@ sessionStorage = new sessionStorage;
 // create the global reference only if it is usable
 if(cache !== null)
     // be sure both top context and this context (could be the same) point to the same object
-    top.sessionStorage = window.sessionStorage = sessionStorage;
+    window.sessionStorage = sessionStorage;
 
-} // else end
 })(window);
