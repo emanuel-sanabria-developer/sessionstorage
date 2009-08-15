@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script type="text/javascript" src="../build.php"></script>
+<script type="text/javascript">
+var session = [
+    window.name,
+    sessionStorage.getItem("key"),
+    sessionStorage.setItem("key", "value"),
+    sessionStorage.setItem("value", "key"),
+    sessionStorage.getItem("value"),
+    window.name,
+    sessionStorage.setItem("key", "value"),
+    window.name,
+    sessionStorage.removeItem("value"),
+    sessionStorage.getItem("key"),
+    window.name,
+    //sessionStorage.clear(),
+    window.name
+];
+document.write('<pre>' + session.join("\r\n") + '</pre>');
+</script>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>HTML5 sessionStorage demo 1</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <script type="text/javascript" src="http://sessionstorage.googlecode.com/svn/trunk/build/sessionStorage.min.js"></script>
+        <script type="text/javascript">
+        onload = function(){
+            var div = document.getElementById("info");
+            if(!sessionStorage.disabled){
+                if(sessionStorage.getItem("sessionStarted")){
+                    function showInfo(){
+                        div.innerHTML = "Your session started " + Math.floor((new Date - sessionStarted) / 1000) + " seconds ago.";
+                        return showInfo;
+                    };
+                    var sessionStarted  = new Date(parseInt(sessionStorage.getItem("sessionStarted"), 0));
+                    setInterval(showInfo(), 250);
+                }
+                else {
+                    sessionStorage.setItem("sessionStarted", new Date().getTime());
+                    div.innerHTML = "Welcome to HTML5 sessionStorage demonstration.";
+                }
+            } else
+                div.innerHTML = "I am sorry. You have no cookies enabled or your browser is crap.";
+        };
+        </script>
+    </head>
+    <body>
+        <h2 id="info"></h2>
+        <h1>What Is This Demo About</h1>
+        <p>
+            In this page you can test a sessionStorage usage example.
+            A sessionStorage object persists only in this tab or window.
+            If your browser has not a native sessionStorage object,
+            You should be able to use sessionStorage thanks to <a href="http://code.google.com/p/sessionstorage/">my porting</a>.
+        </p>
+        <p>
+            Try to reload this page or try to surf <a href="http://webreflection.blogspot.com/">elsewhere</a>, but please, copy
+            this page url somewhere and try to come back whenever you want as long as you use the same window.
+        </p>
+        <p>
+            Best Regards, Andrea Giammarchi.
+        </p>
+        <p>
+            P.S. Tools like IE Tester could have disabled cookie. Please use real case scenario like native browsers or virtual machines to test this page.
+        </p>
+    </body>
+</html>
