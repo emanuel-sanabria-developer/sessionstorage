@@ -1,5 +1,5 @@
 /** HTML5 sessionStorage
- * @build       2009-08-15 00:55:24
+ * @build       2009-08-15 16:14:06
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
@@ -279,7 +279,7 @@ function sessionStorage(){
         // regexp to test the domain cookie
         cookie = /\bsessionStorage\b=([^;]+)(;|$)/,
         // a RegExp able to understand in a shot the Linear String Storage Protocol
-        re = new RegExp(c.concat("([^", c, "]*)", c, "(\\d+)", c, "([^", c, "]*)"), "g"),
+        // re = new RegExp(c.concat("([^", c, "]*)", c, "(\\d+)", c, "([^", c, "]*)"), "g"),
         // check if cookie was setted before during this session
         data = cookie.exec(document.cookie),
         // the constructor escape function to use
@@ -287,7 +287,7 @@ function sessionStorage(){
         // and to set up the window.name if necessary
         escape = window.encodeURIComponent,
         // internal variables
-        domain, i
+        domain, length, i, l
     ;
     // if data is not null ...
     if(data){
@@ -301,11 +301,20 @@ function sessionStorage(){
         else{
             // the LSS object with the domain string as clear option
             LSS = new LSS(window, "name", domain);
-            // populate keys in order to make sessionStorage standard
+
+            /** actually too slow with big strings
             while(data = re.exec(name))
-                // cache is a private scope Array which contains set keys
                 cache.push(LSS.unescape(data[1]));
-            // length is a read only property which respect set keys
+            */
+
+            // populate keys in order to make sessionStorage standard (5 times faster than RegExp version)
+            i = l = 0;
+            while(-1 < (i = name.indexOf(c, i))){
+                // cache is a private scope Array which contains set keys
+                cache[l++] = LSS.unescape(name.substring(++i, length = name.indexOf(c, i)));
+                i = 1 * name.substring(++length, name.indexOf(c, length)) + length + 2;
+            };
+
             this.length = cache.length;
         };
     } else {
