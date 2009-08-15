@@ -1,5 +1,5 @@
 /** HTML5 sessionStorage
- * @build       2009-08-15 18:19:24
+ * @build       2009-08-15 18:29:47
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
