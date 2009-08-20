@@ -195,6 +195,7 @@ sessionStorage.prototype = {
      */
     clear:function(){
         LSS.clear();
+        $cache = {};
         cache.length = 0;
     }
 };
