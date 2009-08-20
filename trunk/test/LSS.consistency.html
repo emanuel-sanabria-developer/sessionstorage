@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<pre style=""><strong>Linear String Storage Test</strong></pre>
+<script type="text/javascript">
+var xhr = new XMLHttpRequest;
+xhr.open("GET", "../src/LSS.js?" + Math.random(), false);
+xhr.send(null);
+eval(xhr.responseText);
+var storage = new LSS;
+storage.debug = (function(pre){
+    function pad(str){
+        return (str + pad.empty).substring(0, pad.len);
+    };
+    pad.len = 30;
+    pad.empty = new Array(pad.len + 1).join(" ");
+    return function(what, str){
+        pre.appendChild(document.createElement("br"));
+        pre.appendChild(document.createTextNode(pad(what || "storage")));
+        pre.appendChild(document.createTextNode(typeof str === "undefined" ? this._storage[this._key] : "[" + str + "]"));
+    };
+})(document.getElementsByTagName("pre")[0]);
+storage.set("", "");
+storage.set("1", "");
+storage.set(".", "");
+storage.set("2", "");
+storage.set("3", "");
+storage.debug("''", storage.get("."));
+storage.debug("''", storage.get(""));
+storage.debug("''", storage.get("1"));
+storage.debug("''", storage.get("2"));
+storage.debug("''", storage.get("3"));
+storage.del(".");
+storage.debug("'null'", storage.get("."));
+storage.debug("''", storage.get(""));
+storage.debug("''", storage.get("1"));
+storage.debug("''", storage.get("2"));
+storage.debug("''", storage.get("3"));
+storage.del("2");
+storage.debug("'null'", storage.get("."));
+storage.debug("''", storage.get(""));
+storage.debug("''", storage.get("1"));
+storage.debug("'null'", storage.get("2"));
+storage.debug("''", storage.get("3"));
+storage.del("");
+storage.debug("'null'", storage.get("."));
+storage.debug("'null'", storage.get(""));
+storage.debug("''", storage.get("1"));
+storage.debug("'null'", storage.get("2"));
+storage.debug("''", storage.get("3"));
+storage.del("3");
+storage.debug("'null'", storage.get("."));
+storage.debug("'null'", storage.get(""));
+storage.debug("''", storage.get("1"));
+storage.debug("'null'", storage.get("2"));
+storage.debug("'null'", storage.get("3"));
+storage.del("1");
+storage.debug("'null'", storage.get("."));
+storage.debug("'null'", storage.get(""));
+storage.debug("'null'", storage.get("1"));
+storage.debug("'null'", storage.get("2"));
+storage.debug("'null'", storage.get("3"));
+</script>

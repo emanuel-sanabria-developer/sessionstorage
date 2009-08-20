@@ -6,20 +6,20 @@
  * @author          Andrea Giammarchi
  * @license         Mit Style License
  * @blog            http://webreflection.blogspot.com/
- * @version         1.2
+ * @version         1.3
  * @compatibility   Internet Explorer, Chrome, Opera (unobtrusive for others)
  * @protocol        Linear String Storage Protocol Specs
  * -----------------------------------------------
  * c       = special separator char
- * s       = key.length separator char
+ * s       = key prefix char
  * key     = key to use as value reference
  * len     = unescaped key length
  * value   = value to store
  * length  = value length
- * entry   = c + key + s + len + c + length + c + value
+ * entry   = c + s + key + c + c + length + c + value
  * -----------------------------------------------
- * c key s len c length c value
- * o[   ].[   ]o[      ]o[     ]
+ * cs key cc length c value
+ * o.[   ]oo[      ]o[     ]
  *
  * key must be a string
  * value must be a string
@@ -60,7 +60,7 @@ var LSS = (function(window){
      */
     LSS.prototype.c = String.fromCharCode(1);
 
-    /** @description    character to use as key:length separator
+    /** @description    character to use as key prefix (avoid problems with empty key/values)
      */
     LSS.prototype._c = ".";
 
@@ -97,7 +97,7 @@ var LSS = (function(window){
     LSS.prototype.get = function(key){
         var _storage = this._storage[this._key],
             c = this.c,
-            i = _storage.indexOf(key = c.concat(this.escape(key), this._c, key.length, c), this._i),
+            i = _storage.indexOf(key = c.concat(this._c, this.escape(key), c, c), this._i),
             data = null
         ;
         if(-1 < i){
@@ -115,14 +115,15 @@ var LSS = (function(window){
     LSS.prototype.key = function(){
         var _storage = this._storage[this._key],
             c = this.c,
+            _c = c + this._c,
             i = this._i,
             data = [],
             length = 0,
             l = 0
         ;
-        while(-1 < (i = _storage.indexOf(c, i))){
-            data[l++] = this.unescape(_storage.substring(++i, length = _storage.indexOf(this._c, i)));
-            i = _storage.indexOf(c, length) + 1;
+        while(-1 < (i = _storage.indexOf(_c, i))){
+            data[l++] = this.unescape(_storage.substring(i += 2, length = _storage.indexOf(c, i)));
+            i = _storage.indexOf(c, length) + 2;
             length = _storage.indexOf(c, i);
             i = 1 + length + 1 * _storage.substring(i, length);
         };
@@ -153,8 +154,7 @@ var LSS = (function(window){
      */
     function escape(key, data){
         var c = this.c;
-        data = this.escape(data);
-        return c.concat(this.escape(key), this._c, key.length, c, data.length, c, data);
+        return c.concat(this._c, this.escape(key), c, c, (data = this.escape(data)).length, c, data);
     };
 
     return LSS;
