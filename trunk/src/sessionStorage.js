@@ -12,8 +12,8 @@
  * @author          Andrea Giammarchi
  * @license         Mit Style License
  * @blog            http://webreflection.blogspot.com/
- * @version         1.2.1
- * @compatibility   Internet Explorer, Chrome, Opera (unobtrusive for others)
+ * @version         1.4
+ * @compatibility   Android, Chrome, Explorer, Opera, unobtrusive for other browsers
  * @credits         W3 WebStorage Draft     http://dev.w3.org/html5/webstorage/
  *                  RC4 Stream Cipher       http://www.wisdom.weizmann.ac.il/~itsik/RC4/rc4.html
  * @protocol        Linear String Storage, by the @author
@@ -39,15 +39,15 @@ function sessionStorage(){
     // in-scope callback, will hopefully disappear
     // as soon as the sessionStorage will be created
     // 'cause it is kinda useless outside
-    // the purpose: set the secret key, clear the window name
-    // create the LSS instance setting used name
+    // the purpose: set the secret key
+    // create the LSS instance mark the window name init point
     function clear(){
         // the cookie with the unique generated key
         document.cookie = [
-            "sessionStorage=" + escape($key = RC4.key(128))
+            "sessionStorage=" + window.encodeURIComponent($key = RC4.key(128))
         ].join(';');
-        // the clean window.name with encrypted domain
-        top.name = escape(RC4.encode($key, document.domain));
+        // set the encrypted prefix to use for each soterd key
+        domain = RC4.encode($key, domain);
         // the LSS object to use in the entire scope
         LSS = new LSS(top, "name", top.name);
     };
@@ -59,30 +59,38 @@ function sessionStorage(){
         cookie = /\bsessionStorage\b=([^;]+)(;|$)/,
         // check if cookie was setted before during this session
         data = cookie.exec(document.cookie),
-        // the constructor escape function to use
-        // to set the cookie avoid problems
-        // and to set up the window.name if necessary
-        escape = window.encodeURIComponent,
-        // internal variables
-        domain, i
+        // internal variable
+        i
     ;
     // if data is not null ...
     if(data){
         // retrieve the $key to use via the RC4.decode method
         $key = window.decodeURIComponent(data[1]);
-        // verify that window.name has not been used by another domain
-        // if window.name does NOT start with the encrypted domain, via cookie key ...
-        domain = escape(RC4.encode($key, document.domain));
-        if(domain !== name.substr(0, domain.length))
-            // get rid of it (memory safe)
-            name = clear();
-        else{
-            // the LSS object with the domain string as safe clear option
-            LSS = new LSS(top, "name", domain);
-            // cache is a private scope Array whith all keys pre-generated
-            cache.push.apply(cache, LSS.key());
-            // the length of this session
-            this.length = cache.length;
+        // set the encrypted prefix to use for each soterd key
+        domain = RC4.encode($key, domain);
+        // create the LSS object without a predefined length
+        LSS = new LSS(top, "name");
+        // loop over each key in order to assign the correct for this instance, if any ...
+        for(var key = LSS.key(), i = 0, length = key.length, $cache = {}; i < length; ++i){
+            if((data = key[i]).indexOf(domain) === 0){
+                // cache is an internal array used to quickly retrieve keys
+                cache.push(data);
+                $cache[data] = LSS.get(data);
+                // the LSS is not efficient as is
+                // everything should be removed and later re-appended
+                LSS.del(data);
+            };
+        };
+        // the optimized LSS with a start point and available clear operation
+        LSS = new LSS.constructor(top, "name", top.name);
+        // the length of this session
+        if(0 < (this.length = cache.length)){
+            // now it is possible to re-append data
+            // to make things faster let's use some LSS property
+            for(i = 0, length = cache.length, c = LSS.c, data = []; i < length; ++i)
+                // this is a fast way to emulate LSS.set method
+                data[i] = c.concat(LSS._c, LSS.escape(key = cache[i]), c, c, (key = LSS.escape($cache[key])).length, c, key);
+            top.name += data.join("");
         };
     } else {
         // it is the first time user is in this page
@@ -130,6 +138,9 @@ sessionStorage.prototype = {
      *  // toldya it's my stuff!
      */
     getItem:function(key){
+        // the used key is internally composed
+        // by the encrypted domain prefix plus the user key
+        key = domain + key;
         // there is a page session included in the package
         // basically if we retrieve a key once, performanes
         // will be affected only the first time.
@@ -140,9 +151,9 @@ sessionStorage.prototype = {
         if(hasOwnProperty.call($cache, key))
             return $cache[key];
         // non cached keys are computated runtime
-        var data = LSS.get("" + key);
+        var data = LSS.get(key);
         if(data !== null)
-            // nd cached for next execution
+            // data is cached for next execution
             data = $cache[key] = RC4.decode($key, data);
         return data;
     },
@@ -159,7 +170,9 @@ sessionStorage.prototype = {
      */
     setItem:function(key, data){
         // delete the key
-        this.removeItem(key = "" + key);
+        this.removeItem(key);
+        // set the correct key
+        key = domain + key;
         // append the new key/value pair and speed up getItem for this key
         LSS.set(key, RC4.encode($key, $cache[key] = "" + data));
         // set right length
@@ -175,7 +188,7 @@ sessionStorage.prototype = {
      *  sessionStorage.getItem("myName"); // null
      */
     removeItem:function(key){
-        var data = LSS.get(key = "" + key);
+        var data = LSS.get(key = domain + key);
         if(data !== null){
             // only if it was present ...
             delete $cache[key];
@@ -195,12 +208,16 @@ sessionStorage.prototype = {
      */
     clear:function(){
         LSS.clear();
+        $cache = {};
         cache.length = 0;
     }
 };
 
 // private scope variables
 var
+    // the prefix to use to enable multiple domains
+    domain = top.document.domain,
+
     // Array with all set keys
     cache = [],
 
@@ -229,7 +246,14 @@ if(!cache.indexOf) cache.indexOf = function(data){
         return -1;
     };
 
-// it's about the time to create the sessionStorage object, isn't it?
+// if there is a top sessionStorage it does not make sense
+// to re-apply the constructor for the same storage (aka: window.name)
+if(top.sessionStorage){
+    // let's clone the top object
+    sessionStorage = function(){};
+    sessionStorage.prototype = top.sessionStorage;
+};
+// in any case it's time to create the sessionStorage for this context
 sessionStorage = new sessionStorage;
 
 // create the global reference only if it is usable
