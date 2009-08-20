@@ -1,6 +1,6 @@
 /** RC4 Stream Cipher
  *  http://www.wisdom.weizmann.ac.il/~itsik/RC4/rc4.html
- * @build       2009-08-15 23:04:22
+ * @build       2009-08-20 04:15:48
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
