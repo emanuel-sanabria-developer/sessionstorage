@@ -8,10 +8,10 @@
  * @author          this JavaScript porting by Andrea Giammarchi
  * @license         Mit Style License
  * @blog            http://webreflection.blogspot.com/
- * @version         1.1
+ * @version         1.2
  * @compatibility   hopefully every browser
  */
- var RC4 = (function(fromCharCode, random){
+ var RC4 = (function(String, fromCharCode, random){
     return {
 
         /** RC4.decode(key:String, data:String):String
@@ -34,6 +34,9 @@
         encode:function(key, data){
             // cannot spot anything redundant that
             // could make this algo faster!!! Good Stuff RC4!
+            // ----
+            // actually I did, fromCharCode in a loop is redundant
+            // I removed N function calls plus the array join
             for(var
                 length = key.length, len = data.length,
                 decode = [], a = [],
@@ -50,9 +53,9 @@
                 j = (j + ($ = a[i])) % 256;
                 length = a[i] = a[j];
                 a[j] = $;
-                decode[l++] = fromCharCode(data.charCodeAt(k) ^ a[(length + $) % 256]);
+                decode[l++] = data.charCodeAt(k) ^ a[(length + $) % 256];
             };
-            return decode.join("");
+            return fromCharCode.apply(String, decode);
         },
 
         /** RC4.key(length:Number):String
@@ -62,11 +65,12 @@
          */
         key:function(length){
             for(var i = 0, key = []; i < length; ++i)
-                key[i] = fromCharCode(1 + ((random() * 255) << 0));
-            return key.join("");
+                key[i] = 1 + ((random() * 255) << 0)
+            ;
+            return fromCharCode.apply(String, key);
         }
     }
     // I like to freeze stuff in interpretation time
     // it makes things a bit safer when obtrusive libraries
     // are around
-})(window.String.fromCharCode, window.Math.random);
+})(window.String, window.String.fromCharCode, window.Math.random);
