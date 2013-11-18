@@ -1,17 +1,30 @@
 /** HTML5 sessionStorage
- * @build       2009-08-20 23:35:12
+ * @build       2013-11-18 19:33:05
  * @author      Andrea Giammarchi
  * @license     Mit Style License
  * @project     http://code.google.com/p/sessionstorage/
  */
 
 // define sessionStorage only if not present (old browser)
-if(typeof sessionStorage === "undefined")(function(window){
+(function(window){
+
+if(typeof sessionStorage !== "undefined") {
+  try {
+    random = '@@' + Math.random();
+    sessionStorage.setItem(random, random);
+    sessionStorage.removeItem(random);
+    return;
+  } catch(o_O) {
+    // iOS private browsing
+    // keep going on
+  }
+}
 
 // this script could have been included via iframe so we would like to use the top context as storage area
 // but if the iframe is not part of the domain below check could generate an error
 var // the top pointer is used in any case to point to the top context level
-    top = window
+    top = window,
+    random
 ;
 try {
     while(top !== top.top)
@@ -29,10 +42,10 @@ try {
  * @author          this JavaScript porting by Andrea Giammarchi
  * @license         Mit Style License
  * @blog            http://webreflection.blogspot.com/
- * @version         1.1
+ * @version         1.2
  * @compatibility   hopefully every browser
  */
- var RC4 = (function(fromCharCode, random){
+ var RC4 = (function(String, fromCharCode, random){
     return {
 
         /** RC4.decode(key:String, data:String):String
@@ -55,6 +68,9 @@ try {
         encode:function(key, data){
             // cannot spot anything redundant that
             // could make this algo faster!!! Good Stuff RC4!
+            // ----
+            // actually I did, fromCharCode in a loop is redundant
+            // I removed N function calls plus the array join
             for(var
                 length = key.length, len = data.length,
                 decode = [], a = [],
@@ -71,9 +87,9 @@ try {
                 j = (j + ($ = a[i])) % 256;
                 length = a[i] = a[j];
                 a[j] = $;
-                decode[l++] = fromCharCode(data.charCodeAt(k) ^ a[(length + $) % 256]);
+                decode[l++] = data.charCodeAt(k) ^ a[(length + $) % 256];
             };
-            return decode.join("");
+            return fromCharCode.apply(String, decode);
         },
 
         /** RC4.key(length:Number):String
@@ -83,14 +99,15 @@ try {
          */
         key:function(length){
             for(var i = 0, key = []; i < length; ++i)
-                key[i] = fromCharCode(1 + ((random() * 255) << 0));
-            return key.join("");
+                key[i] = 1 + ((random() * 255) << 0)
+            ;
+            return fromCharCode.apply(String, key);
         }
     }
     // I like to freeze stuff in interpretation time
     // it makes things a bit safer when obtrusive libraries
     // are around
-})(window.String.fromCharCode, window.Math.random);
+})(window.String, window.String.fromCharCode, window.Math.random);
 
 /** Linear String Storage
  * -----------------------------------------------
@@ -505,7 +522,10 @@ if(!cache.indexOf) cache.indexOf = function(data){
 
 // if there is a top sessionStorage it does not make sense
 // to re-apply the constructor for the same storage (aka: window.name)
-if(top.sessionStorage){
+if(top.sessionStorage && (
+  // not a native method
+  !/native/.test(top.sessionStorage.clear)
+)){
     // let's clone the top object
     sessionStorage = function(){};
     sessionStorage.prototype = top.sessionStorage;
