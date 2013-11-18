@@ -248,7 +248,10 @@ if(!cache.indexOf) cache.indexOf = function(data){
 
 // if there is a top sessionStorage it does not make sense
 // to re-apply the constructor for the same storage (aka: window.name)
-if(top.sessionStorage){
+if(top.sessionStorage && (
+  // not a native method
+  !/native/.test(top.sessionStorage.clear)
+)){
     // let's clone the top object
     sessionStorage = function(){};
     sessionStorage.prototype = top.sessionStorage;
